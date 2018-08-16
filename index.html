@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>五子棋</title>
+    <style>
+    body{
+        margin: 0;
+        background-color: #ccc;
+    }
+    #canvas{
+        display: block;
+        margin: 100px auto;
+        /* width: 450px;
+        height: 450px; */
+        background-color: #fff;
+    }
+    </style>
+</head>
+<body>
+    <canvas id = "canvas" width = '480' height = '480'></canvas>
+<script>
+    var canvas = document.querySelector('#canvas');
+    var ctx = canvas.getContext('2d');
+    var chesscolor = ['black','white'];
+    var step = 0;
+    var chess = [];
+    var mode = [
+        [1,0],
+        [0,1],
+        [1,1],
+        [1,-1]
+    ];
+    for(var i = 0; i < 15; i ++) {
+        chess[i] = [];
+        for(var j = 0; j < 15; j ++){
+            chess[i][j] = 0;
+        }
+    }
+    console.log(chess);
+    for(var i = 1; i < 16; i ++){
+        ctx.moveTo(30*i,30);
+        ctx.lineTo(30*i,450);
+        ctx.moveTo(30,30*i);
+        ctx.lineTo(450,30*i);
+    }
+    ctx.stroke();
+    function drawChess(x,y,color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x,y,15,0,Math.PI*2,false);
+        ctx.fill();
+        ctx.stroke();
+    }
+    // drawChess();
+    canvas.addEventListener('click',function(e){
+        var x = Math.round(e.offsetX/30) * 30;
+        var y = Math.round(e.offsetY/30) * 30;
+        if(x == 0 || y == 0 || x == 480 || y == 480){
+            return;
+        }
+        if(chess[x/30-1][y/30-1] == 0) {
+            drawChess(x,y,chesscolor[step%2]);
+            chess[x/30-1][y/30-1] = chesscolor[step%2];
+            checkwin(x/30-1,y/30-1,chesscolor[step%2],mode[0]);
+            checkwin(x/30-1,y/30-1,chesscolor[step%2],mode[1]);
+            checkwin(x/30-1,y/30-1,chesscolor[step%2],mode[2]);
+            checkwin(x/30-1,y/30-1,chesscolor[step%2],mode[3]);
+            // check(x,y);
+            step ++; 
+        }
+    },false);
+    // function check(x,y){
+    //     for(var i = 0;i < 5; i ++){
+    //         checkwin(x/30-1,y/30-1,chesscolor[step%2],mode[i]);
+    //     }
+    // }
+    function checkwin(x,y,color,mode) {
+        var count = 0;
+        console.log(mode);
+        for(var i = 1; i < 5; i ++){
+            if(chess[x+i*mode[0]]){
+                if(chess[x+i*mode[0]][y+i*mode[1]] == color){
+                    count ++;
+                    }else{
+                        break;
+                        }
+                    }
+                 }
+        for(var i = 1; i < 5; i ++){
+            if(chess[x-i*mode[0]]){
+                if(chess[x-i*mode[0]][y-i*mode[1]] == color){
+                    count ++;
+                }else{
+                    break;
+                }
+            }
+        }
+        console.log(count);
+        if(count >=4){
+            alert(color, 'win');
+        }
+    }
+    
+    
+</script>
+</body>
+</html>
